@@ -5,6 +5,7 @@
 
 import logging
 import openai
+from openai import AzureOpenAI
 import azure.functions as func
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
@@ -13,10 +14,11 @@ from azure.keyvault.secrets import SecretClient
 
 credential=DefaultAzureCredential()
 client=SecretClient(vault_url='https://trappus-key-vault.vault.azure.net/',credential=credential)
-openai.api_key = client.get_secret('OPENAI-API-KEY')
-openai.api_base = client.get_secret('OPENAI-ENDPOINT')
+api_key = client.get_secret('OPENAI-API-KEY')
+api_endpoint = client.get_secret('OPENAI-ENDPOINT')
 openai.api_type = 'azure'
-openai.api_version = '2024-11-20'  # Replace with your actual deployed version
+api_version = '2024-11-20'  # Replace with your actual deployed version
+azure_openai_client=AzureOpenAI(azure_endpoint=api_endpoint,api_key=api_key,api_version=api_version)
 
 MODEL_NAME = "gpt-4o"  # Adjust to your deployed model ID if different
 
@@ -31,7 +33,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         logging.info(f"User prompt: {user_input}")
 
         # Call OpenAI
-        response = openai.ChatCompletion.create(
+        response = azure_openai_client.chat.completions.create(
             engine=MODEL_NAME,
             messages=[
                 {"role": "system", "content": "You are TRAPPUS, an automation assistant for Azure and WordPress."},
