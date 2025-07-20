@@ -14,8 +14,8 @@ from azure.keyvault.secrets import SecretClient
 
 credential=DefaultAzureCredential()
 client=SecretClient(vault_url='https://trappus-key-vault.vault.azure.net/',credential=credential)
-api_key = client.get_secret('OPENAI-API-KEY')
-api_endpoint = client.get_secret('OPENAI-ENDPOINT')
+api_key = client.get_secret('OPENAI-API-KEY').value
+api_endpoint = client.get_secret('OPENAI-ENDPOINT').value
 openai.api_type = 'azure'
 api_version = '2024-11-20'  # Replace with your actual deployed version
 azure_openai_client=AzureOpenAI(azure_endpoint=api_endpoint,api_key=api_key,api_version=api_version)
