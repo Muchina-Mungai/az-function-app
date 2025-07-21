@@ -20,8 +20,9 @@ openai.api_type = 'azure'
 api_version = '2024-11-20'  # Replace with your actual deployed version
 azure_openai_client=AzureOpenAI(azure_endpoint=api_endpoint,api_key=api_key,api_version=api_version)
 
+app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 MODEL_NAME = "gpt-4o"  # Adjust to your deployed model ID if different
-
+@app.route(route='query_app')
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('TRAPPUS Function received a request.')
 
